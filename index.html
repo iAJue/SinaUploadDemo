@@ -1,280 +1,43 @@
-<html>
+<!DOCTYPE html>
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>优雅的图片上传界面</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f3f4f6;
-            --text-color: #333;
-            --success-color: #34c759;
-            --error-color: #ff3b30;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .upload-container {
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 450px;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .upload-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .upload-area {
-            border: 3px dashed var(--primary-color);
-            border-radius: 15px;
-            padding: 50px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: var(--secondary-color);
-        }
-
-        .upload-area:hover {
-            background-color: #e6f0ff;
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 64px;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .upload-area:hover .upload-icon {
-            transform: scale(1.1);
-        }
-
-        .upload-text {
-            color: var(--text-color);
-            font-size: 20px;
-            font-weight: 300;
-            margin-bottom: 10px;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .preview-area {
-            margin-top: 30px;
-            display: none;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 250px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .preview-image:hover {
-            transform: scale(1.05);
-        }
-
-        .upload-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 30px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .upload-btn:hover {
-            background-color: #3b7ac4;
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
-            transform: translateY(-2px);
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(74, 144, 226, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(74, 144, 226, 0);
-            }
-        }
-
-        .upload-btn:focus {
-            outline: none;
-            animation: pulse 1.5s infinite;
-        }
-
-        .success-message,
-        .error-message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: 600;
-            display: none;
-        }
-
-        .success-message {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .error-message {
-            background-color: var(--error-color);
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="upload-container">
-        <div class="upload-area" id="dropZone">
-            <div class="upload-icon">📸</div>
-            <div class="upload-text">点击或拖放图片到这里</div>
-            <div style="font-size: 14px; color: #666;">支持 JPG、PNG、GIF 格式</div>
-            <input type="file" id="fileInput" class="file-input" accept="image/*">
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" id="closeSidebar">&times;</button>
+        <ul id="linkList">
+            <!-- 链接记录将动态加载到这里 -->
+        </ul>
+    </div>
+    <div class="content">
+        <button class="sidebar-toggle" id="openSidebar">&#9776;</button>
+        <div class="upload-container">
+            <div class="upload-area" id="dropZone">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">点击或拖放图片到这里</div>
+                <div style="font-size: 14px; color: #000;">支持 JPG、PNG、GIF 格式</div>
+                <input type="file" id="fileInput" class="file-input" accept="image/*">
+            </div>
+            <div class="preview-area" id="previewArea">
+                <img src="" alt="预览图片" class="preview-image" id="previewImage">
+            </div>
+            <button class="upload-btn" id="uploadBtn">上传图片</button>
+            <div class="loading-indicator" id="loadingIndicator"></div>
+            <div class="success-message" id="successMessage">
+                图片上传成功！链接: <span id="imageLink" class="link"></span>
+            </div>
+            <div class="error-message" id="errorMessage">请选择一张图片！</div>
         </div>
-        <div class="preview-area" id="previewArea">
-            <img src="" alt="预览图片" class="preview-image" id="previewImage">
-        </div>
-        <button class="upload-btn" id="uploadBtn">上传图片</button>
-        <div class="success-message" id="successMessage">图片上传成功！</div>
-        <div class="error-message" id="errorMessage">请选择一张图片！</div>
+        <div class="copy-success" id="copySuccess">链接已复制到剪切板！</div>
     </div>
 
-    <script>
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const previewArea = document.getElementById('previewArea');
-        const previewImage = document.getElementById('previewImage');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
-
-        dropZone.addEventListener('click', () => fileInput.click());
-
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.style.backgroundColor = '#e6f0ff';
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.style.backgroundColor = '';
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.style.backgroundColor = '';
-            const files = e.dataTransfer.files;
-            handleFiles(files);
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            const files = e.target.files;
-            handleFiles(files);
-        });
-
-        function handleFiles(files) {
-            if (files.length > 0) {
-                const file = files[0];
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        previewImage.src = e.target.result;
-                        previewArea.style.display = 'block';
-                        successMessage.style.display = 'none';
-                        errorMessage.style.display = 'none';
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    showError('请选择有效的图片文件！');
-                }
-            }
-        }
-
-        uploadBtn.addEventListener('click', () => {
-            if (previewImage.src) {
-                const fileInput = document.getElementById('fileInput');
-                const files = fileInput.files;
-
-                if (files.length > 0) {
-                    const file = files[0];
-                    const formData = new FormData();
-                    formData.append('file', file);
-
-                    // 这里是实际的上传逻辑
-                    fetch('http://127.0.0.1:5000/upload', {
-                        method: 'POST',
-                        body: formData,
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            // 解析返回的数据
-                            const parsedData = JSON.parse(data.result); // 解析 "data" 字段中的 JSON 字符串
-                            const result = JSON.parse(parsedData.data);
-                            const picid = result.picid; // 提取 "picid" 的值
-
-                            if (parsedData.code === "100000") { // 根据 "code" 判断是否成功
-                                showSuccess(`图片上传成功！图片ID: ${picid}`);
-                            } else {
-                                showError('图片上传失败，请重试！');
-                            }
-                        })
-                        .catch(error => {
-                            showError('上传过程中发生错误，请稍后再试！');
-                            console.error('Error:', error);
-                        });
-                } else {
-                    showError('请先选择一张图片！');
-                }
-            } else {
-                showError('请先选择一张图片！');
-            }
-        });
-
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.style.display = 'block';
-            errorMessage.style.display = 'none';
-        }
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-            successMessage.style.display = 'none';
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
